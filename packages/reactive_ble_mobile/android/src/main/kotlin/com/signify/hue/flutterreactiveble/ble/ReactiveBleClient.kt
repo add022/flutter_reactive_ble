@@ -38,6 +38,8 @@ import kotlin.collections.component2
 open class ReactiveBleClient(private val context: Context) : BleClient {
     private val connectionQueue = ConnectionQueue()
     private val allConnections = CompositeDisposable()
+    internal var activeConnections = mutableMapOf<String, DeviceConnector>()
+
 
     companion object {
         // this needs to be in companion update since background isolates respawn the event channels
@@ -47,14 +49,12 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
 
         lateinit var rxBleClient: RxBleClient
             internal set
-        internal var activeConnections = mutableMapOf<String, DeviceConnector>()
     }
 
     override val connectionUpdateSubject: BehaviorSubject<ConnectionUpdate>
         get() = connectionUpdateBehaviorSubject
 
     override fun initializeClient() {
-        activeConnections = mutableMapOf()
         rxBleClient = RxBleClient.create(context)
     }
 
@@ -131,6 +131,7 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
 
     override fun disconnectAllDevices() {
         activeConnections.forEach { (device, connector) -> connector.disconnectDevice(device) }
+        activeConnections.clear()
         allConnections.dispose()
     }
 
