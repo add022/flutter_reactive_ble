@@ -66,13 +66,13 @@ internal class DeviceConnector(
          */
         if (diff < DeviceConnector.Companion.minTimeMsBeforeDisconnectingIsAllowed) {
             Single.timer(DeviceConnector.Companion.minTimeMsBeforeDisconnectingIsAllowed - diff, TimeUnit.MILLISECONDS)
-                    .doFinally {
-                        sendDisconnectedUpdate(deviceId)
-                        disposeSubscriptionsAndRemoveFromQueue()
-                    }.subscribe()
+                .doFinally {
+                    sendDisconnectedUpdate(deviceId)
+                    disposeSubscriptionsAndRemoveFromQueue(deviceId)
+                }.subscribe()
         } else {
             sendDisconnectedUpdate(deviceId)
-            disposeSubscriptionsAndRemoveFromQueue()
+            disposeSubscriptionsAndRemoveFromQueue(deviceId)
         }
     }
 
@@ -80,7 +80,7 @@ internal class DeviceConnector(
         updateListeners(ConnectionUpdateSuccess(deviceId, ConnectionState.DISCONNECTED.code))
     }
 
-    private fun disposeSubscriptionsAndRemoveFromQueue() {
+    private fun disposeSubscriptionsAndRemoveFromQueue(deviceId: String) {
         connectionDisposable?.dispose()
         connectDeviceSubject.onComplete()
         connectionStatusUpdates.dispose()
