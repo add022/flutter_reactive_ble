@@ -40,7 +40,6 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
     private val allConnections = CompositeDisposable()
     internal var activeConnections = mutableMapOf<String, DeviceConnector>()
 
-
     companion object {
         // this needs to be in companion update since background isolates respawn the event channels
         // Fix for https://github.com/PhilipsHue/flutter_reactive_ble/issues/277
