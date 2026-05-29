@@ -204,10 +204,7 @@ internal class DeviceConnector(
         connectionQueue.observeQueue()
             .filter { queue ->
                 queue.firstOrNull() == deviceId || !queue.contains(deviceId)
-            }
-            .take(1)
-
-    /**
+        }.take(1)
      * Reads the current RSSI value of the device
      */
     internal fun readRssi(): Single<Int> =
